@@ -1,5 +1,6 @@
 package com.example.intent01;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,6 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextName, editTextAge, editTextHeight, editTextWeight;
     private String name, age;
     private static final String TAG = "main";
+    private final int BMIRequestCode = 10;
+    private final int ReturnError = 20;
+    private final int ReturnData = 30;
+    private TextView textViewReturn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         editTextHeight = (EditText) findViewById(R.id.editText_height);
         editTextWeight = (EditText) findViewById(R.id.editText_weight);
 
-
+        textViewReturn = (TextView) findViewById(R.id.textView_return);
+        textViewReturn.setText("");
 
         buttonStart = (ImageButton) findViewById(R.id.imageButton_start);
         buttonStart.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     bmiIntent.putExtra("weight", weightValue);
 
 
-                    startActivity(bmiIntent);
+//                    startActivity(bmiIntent);
+
+                    startActivityForResult(bmiIntent, BMIRequestCode);
                 }
 
             }
@@ -95,5 +105,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    } // onCreate()
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == BMIRequestCode) {
+            switch (resultCode) {
+                case ReturnError:
+                    String bmierror = data.getStringExtra("bmierror");
+                    textViewReturn.setText(bmierror);
+                    break;
+
+                case ReturnData:
+                    String bmivalue = data.getStringExtra("bmivalue");
+                    textViewReturn.setText(bmivalue);
+                    break;
+
+
+            }
+        }
     }
-}
+
+
+} // class mainActivity

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -15,6 +17,11 @@ public class BMIActivity extends AppCompatActivity {
     private static final String TAG = "main";
     private TextView textViewBMI;
     private Intent intent;
+    private Intent bmiIntent;
+    private final int ReturnError = 20;
+    private final int ReturnData = 30;
+    private Button buttonBack;
+    private String bmiString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,11 @@ public class BMIActivity extends AppCompatActivity {
         // 限制身高 若大於 250 則結束 bmiActivity
         if(height  > 250) {
             Log.d(TAG, "height > 250 , bmiActivity has been finished.");
+
+            // 設定若大於 250 要傳回給 mainActivity的資料
+            bmiIntent = new Intent();
+            bmiIntent.putExtra("bmierror", "Your height is error.");
+            setResult(ReturnError, bmiIntent);
             finish();
         }
 
@@ -51,7 +63,7 @@ public class BMIActivity extends AppCompatActivity {
 
         // 將數據格式化，其結果為字串型態。
         NumberFormat nf = new DecimalFormat("##.00");
-        String bmiString = nf.format(bmiValue);
+        bmiString = nf.format(bmiValue);
         Log.d(TAG, "bmiString = " + bmiString);
 
         textViewBMI.setText("Name :" + name + ", age : " + age + "\n");
@@ -61,6 +73,19 @@ public class BMIActivity extends AppCompatActivity {
         // 呼叫用 bmi 判斷是否過重的 getBMIMessage 方法
        String message = getBMIMessage(bmiValue);
        textViewBMI.append(message);
+
+
+       buttonBack = (Button) findViewById(R.id.button_back);
+       buttonBack.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent bmiData = new Intent();
+               bmiData.putExtra("bmivalue", bmiString);
+               setResult(ReturnData, bmiData);
+               finish();
+           }
+       });
+
 
 
     }
